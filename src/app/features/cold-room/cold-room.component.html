@@ -1,0 +1,162 @@
+<div class="container py-3">
+  <div class="row g-3">
+    <!-- Panel de control -->
+    <div class="col-12 col-lg-4">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h5 class="card-title mb-3">Diseño de cuarto frío</h5>
+
+          <form (ngSubmit)="buildScene()" #frm="ngForm" class="row g-2">
+            <div class="col-4">
+              <label class="form-label">Largo (m)</label>
+              <input
+                class="form-control"
+                type="number"
+                [(ngModel)]="dims.length"
+                name="length"
+                step="0.1"
+                min="1"
+                required
+                (focus)="selectAll($event)"
+              />
+            </div>
+            <div class="col-4">
+              <label class="form-label">Ancho (m)</label>
+              <input
+                class="form-control"
+                type="number"
+                [(ngModel)]="dims.width"
+                name="width"
+                step="0.1"
+                min="1"
+                required
+                (focus)="selectAll($event)"
+              />
+            </div>
+            <div class="col-4">
+              <label class="form-label">Alto (m)</label>
+              <input
+                class="form-control"
+                type="number"
+                [(ngModel)]="dims.height"
+                name="height"
+                step="0.1"
+                min="2"
+                required
+                (focus)="selectAll($event)"
+              />
+            </div>
+
+            <div class="col-12 mt-2">
+              <label class="form-label">Equipamiento</label>
+
+              <div class="form-check">
+                <input
+                  class="form-check-input"
+                  type="checkbox"
+                  [(ngModel)]="equip.roofCondenser"
+                  name="roofCondenser"
+                  id="roofCondenser"
+                  (change)="onEquipChange()"
+                  [disabled]="!isDimsValid()"
+                />
+                <label class="form-check-label" for="roofCondenser">
+                  Unidad condensadora (techo)
+                </label>
+              </div>
+
+              <div class="form-check">
+                <input
+                  class="form-check-input"
+                  type="checkbox"
+                  [(ngModel)]="equip.evaporators"
+                  name="evaporators"
+                  id="evaporators"
+                  (change)="onEquipChange()"
+                  [disabled]="!isDimsValid()"
+                />
+                <label class="form-check-label" for="evaporators">
+                  Evaporadores (interior)
+                </label>
+              </div>
+
+              <div class="form-check">
+                <input
+                  class="form-check-input"
+                  type="checkbox"
+                  [(ngModel)]="equip.interiorLight"
+                  name="interiorLight"
+                  id="interiorLight"
+                  (change)="onEquipChange()"
+                  [disabled]="!isDimsValid()"
+                />
+                <label class="form-check-label" for="interiorLight">
+                  Luz interior
+                </label>
+              </div>
+
+              <div class="form-check">
+                <input
+                  class="form-check-input"
+                  type="checkbox"
+                  [(ngModel)]="equip.electricPanel"
+                  name="electricPanel"
+                  id="electricPanel"
+                  (change)="onEquipChange()"
+                  [disabled]="!isDimsValid()"
+                />
+                <label class="form-check-label" for="electricPanel">
+                  Tablero eléctrico
+                </label>
+              </div>
+            </div>
+
+            <div class="col-12 d-grid mt-3">
+              <!-- Este botón ahora es más “Recalcular todo”,
+                   pero puedes dejarlo o cambiar el texto -->
+              <button class="btn btn-primary" [disabled]="!frm.form.valid">
+                Aceptar y renderizar
+              </button>
+
+              <button
+                type="button"
+                class="btn btn-outline-secondary flex-fill mt-2"
+                (click)="resetAll(frm)"
+              >
+                Limpiar
+              </button>
+            </div>
+
+            <div class="col-12 d-grid mt-2">
+              <button
+                type="button"
+                class="btn btn-outline-primary"
+                [disabled]="!isDimsValid()"
+                (click)="toggleFront()"
+              >
+                {{ frontVisible ? "Abrir frente" : "Cerrar frente" }}
+              </button>
+            </div>
+          </form>
+
+          <hr class="my-3" />
+
+          <div class="small text-muted">
+            Usa el mouse para <strong>rotar</strong>,
+            <strong>hacer zoom</strong> y <strong>desplazar</strong>. El frente
+            está abierto para ver el interior del cuarto.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Viewport 3D -->
+    <div class="col-12 col-lg-8">
+      <div class="card shadow-sm">
+        <div class="card-body p-0">
+          <div #viewport class="viewport position-relative"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
