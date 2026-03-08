@@ -1,160 +1,312 @@
-<div class="container py-3">
-  <div class="row g-3">
-    <!-- Panel de control -->
-    <div class="col-12 col-lg-4">
-      <div class="card shadow-sm">
-        <div class="card-body">
-          <h5 class="card-title mb-3">Diseño de cuarto frío</h5>
-
-          <form (ngSubmit)="buildScene()" #frm="ngForm" class="row g-2">
-            <div class="col-4">
-              <label class="form-label">Largo (m)</label>
-              <input
-                class="form-control"
-                type="number"
-                [(ngModel)]="dims.length"
-                name="length"
-                step="0.1"
-                min="1"
-                required
-                (focus)="selectAll($event)"
-              />
+<div class="page-bg">
+  <div class="container py-3">
+    <!-- Encabezado -->
+    <div
+      class="card shadow-sm mb-3 header-hero"
+      [style.--hero-img]="'url(' + companyLogoUrl + ')'"
+    >
+      <div
+        class="card-body header-content d-flex justify-content-between align-items-center"
+      >
+        <div class="text-white">
+          <div class="fw-semibold">{{ advisor.name }}</div>
+          <div class="small">
+            <div>
+              📞
+              <a class="text-white" [href]="'tel:' + advisor.phone">{{
+                advisor.phone
+              }}</a>
             </div>
-            <div class="col-4">
-              <label class="form-label">Ancho (m)</label>
-              <input
-                class="form-control"
-                type="number"
-                [(ngModel)]="dims.width"
-                name="width"
-                step="0.1"
-                min="1"
-                required
-                (focus)="selectAll($event)"
-              />
+            <div>
+              ✉️
+              <a class="text-white" [href]="'mailto:' + advisor.email">{{
+                advisor.email
+              }}</a>
             </div>
-            <div class="col-4">
-              <label class="form-label">Alto (m)</label>
-              <input
-                class="form-control"
-                type="number"
-                [(ngModel)]="dims.height"
-                name="height"
-                step="0.1"
-                min="2"
-                required
-                (focus)="selectAll($event)"
-              />
-            </div>
+          </div>
+        </div>
+        <div class="brand-box">
+          <img [src]="companyLogoUrl" alt="Imagen empresa" class="brand-img" />
+        </div>
+      </div>
+    </div>
 
-            <div class="col-12 mt-2">
-              <label class="form-label">Equipamiento</label>
+    <!-- Servicios -->
+    <div class="card shadow-sm mb-3">
+      <div class="card-body">
+        <div class="services-heading">
+          <div class="services-kicker">Servicios</div>
+          <div class="services-brand">Bajo Ceros Colombia SAS</div>
+        </div>
 
-              <div class="form-check">
-                <input
-                  class="form-check-input"
-                  type="checkbox"
-                  [(ngModel)]="equip.roofCondenser"
-                  name="roofCondenser"
-                  id="roofCondenser"
-                  (change)="onEquipChange()"
-                  [disabled]="!isDimsValid()"
-                />
-                <label class="form-check-label" for="roofCondenser">
-                  Unidad condensadora (techo)
-                </label>
+        <div class="row g-3">
+          <div class="col-12 col-md-4" *ngFor="let s of services">
+            <div class="p-3 services-card h-100">
+              <div class="d-flex align-items-baseline gap-2">
+                <div class="services-num display-6 m-0" style="line-height: 1">
+                  {{ s.id }}
+                </div>
+                <div class="services-title">{{ s.title }}</div>
               </div>
 
-              <div class="form-check">
-                <input
-                  class="form-check-input"
-                  type="checkbox"
-                  [(ngModel)]="equip.evaporators"
-                  name="evaporators"
-                  id="evaporators"
-                  (change)="onEquipChange()"
-                  [disabled]="!isDimsValid()"
-                />
-                <label class="form-check-label" for="evaporators">
-                  Evaporadores (interior)
-                </label>
-              </div>
-
-              <div class="form-check">
-                <input
-                  class="form-check-input"
-                  type="checkbox"
-                  [(ngModel)]="equip.interiorLight"
-                  name="interiorLight"
-                  id="interiorLight"
-                  (change)="onEquipChange()"
-                  [disabled]="!isDimsValid()"
-                />
-                <label class="form-check-label" for="interiorLight">
-                  Luz interior
-                </label>
-              </div>
-
-              <div class="form-check">
-                <input
-                  class="form-check-input"
-                  type="checkbox"
-                  [(ngModel)]="equip.electricPanel"
-                  name="electricPanel"
-                  id="electricPanel"
-                  (change)="onEquipChange()"
-                  [disabled]="!isDimsValid()"
-                />
-                <label class="form-check-label" for="electricPanel">
-                  Tablero eléctrico
-                </label>
-              </div>
+              <ul *ngIf="s.items.length" class="mb-0 mt-2 ps-3">
+                <li *ngFor="let it of s.items">{{ it }}</li>
+              </ul>
             </div>
-
-            <div class="col-12 d-grid mt-3">
-              <!-- Este botón ahora es más “Recalcular todo”,
-                   pero puedes dejarlo o cambiar el texto -->
-              <button class="btn btn-primary" [disabled]="!frm.form.valid">
-                Aceptar y renderizar
-              </button>
-
-              <button
-                type="button"
-                class="btn btn-outline-secondary flex-fill mt-2"
-                (click)="resetAll(frm)"
-              >
-                Limpiar
-              </button>
-            </div>
-
-            <div class="col-12 d-grid mt-2">
-              <button
-                type="button"
-                class="btn btn-outline-primary"
-                [disabled]="!isDimsValid()"
-                (click)="toggleFront()"
-              >
-                {{ frontVisible ? "Abrir frente" : "Cerrar frente" }}
-              </button>
-            </div>
-          </form>
-
-          <hr class="my-3" />
-
-          <div class="small text-muted">
-            Usa el mouse para <strong>rotar</strong>,
-            <strong>hacer zoom</strong> y <strong>desplazar</strong>. El frente
-            está abierto para ver el interior del cuarto.
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Viewport 3D -->
-    <div class="col-12 col-lg-8">
-      <div class="card shadow-sm">
-        <div class="card-body p-0">
-          <div #viewport class="viewport position-relative"></div>
+    <div class="row g-3">
+      <!-- Panel de control -->
+      <div class="col-12 col-lg-4 sticky-panel">
+        <div class="card shadow-sm">
+          <div class="card-body">
+            <h5 class="card-title mb-3">Diseño de cuarto frío</h5>
+
+            <form (ngSubmit)="buildScene()" #frm="ngForm" class="row g-2">
+              <div class="col-4">
+                <label class="form-label">Largo (m)</label>
+                <input
+                  class="form-control"
+                  type="number"
+                  [(ngModel)]="dims.length"
+                  name="length"
+                  step="0.1"
+                  min="1"
+                  required
+                  (focus)="selectAll($event)"
+                />
+              </div>
+              <div class="col-4">
+                <label class="form-label">Ancho (m)</label>
+                <input
+                  class="form-control"
+                  type="number"
+                  [(ngModel)]="dims.width"
+                  name="width"
+                  step="0.1"
+                  min="1"
+                  required
+                  (focus)="selectAll($event)"
+                />
+              </div>
+              <div class="col-4">
+                <label class="form-label">Alto (m)</label>
+                <input
+                  class="form-control"
+                  type="number"
+                  [(ngModel)]="dims.height"
+                  name="height"
+                  step="0.1"
+                  min="2"
+                  required
+                  (focus)="selectAll($event)"
+                />
+              </div>
+
+              <div class="col-12 mt-2">
+                <label class="form-label">Equipamiento</label>
+
+                <div class="form-check">
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    [(ngModel)]="equip.roofCondenser"
+                    name="roofCondenser"
+                    id="roofCondenser"
+                    (change)="onEquipChange()"
+                    [disabled]="!isDimsValid()"
+                  />
+                  <label class="form-check-label" for="roofCondenser">
+                    Unidad condensadora (techo)
+                  </label>
+                </div>
+
+                <div class="form-check">
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    [(ngModel)]="equip.evaporators"
+                    name="evaporators"
+                    id="evaporators"
+                    (change)="onEquipChange()"
+                    [disabled]="!isDimsValid()"
+                  />
+                  <label class="form-check-label" for="evaporators">
+                    Evaporadores (interior)
+                  </label>
+                </div>
+
+                <div class="form-check">
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    [(ngModel)]="equip.interiorLight"
+                    name="interiorLight"
+                    id="interiorLight"
+                    (change)="onEquipChange()"
+                    [disabled]="!isDimsValid()"
+                  />
+                  <label class="form-check-label" for="interiorLight">
+                    Luz interior
+                  </label>
+                </div>
+
+                <div class="form-check">
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    [(ngModel)]="equip.electricPanel"
+                    name="electricPanel"
+                    id="electricPanel"
+                    (change)="onEquipChange()"
+                    [disabled]="!isDimsValid()"
+                  />
+                  <label class="form-check-label" for="electricPanel">
+                    Tablero eléctrico
+                  </label>
+                </div>
+              </div>
+
+              <div class="col-12 mt-2">
+                <label class="form-label">Color del piso</label>
+                <select
+                  class="form-select"
+                  name="floorColor"
+                  [(ngModel)]="floorColor"
+                  (ngModelChange)="applyFloorColor()"
+                >
+                  <option *ngFor="let opt of floorOptions" [value]="opt.key">
+                    {{ opt.label }}
+                  </option>
+                </select>
+              </div>
+
+              <div class="col-12 mt-2">
+                <label class="form-label">Color del fondo</label>
+                <select
+                  class="form-select"
+                  name="bgColor"
+                  [(ngModel)]="bgColor"
+                  (ngModelChange)="applyBackgroundColor()"
+                >
+                  <option *ngFor="let opt of bgOptions" [value]="opt.key">
+                    {{ opt.label }}
+                  </option>
+                </select>
+              </div>
+
+              <div class="col-12 mt-2">
+                <label class="form-label">Color de paredes</label>
+                <select
+                  class="form-select"
+                  name="wallColor"
+                  [(ngModel)]="wallColor"
+                  (ngModelChange)="applyWallColor()"
+                  [disabled]="!isDimsValid()"
+                >
+                  <option *ngFor="let opt of wallOptions" [value]="opt.key">
+                    {{ opt.label }}
+                  </option>
+                </select>
+              </div>
+
+              <div class="col-12 mt-2">
+                <label class="form-label">Imagen en paredes</label>
+                <select
+                  class="form-select"
+                  name="wallTexture"
+                  [(ngModel)]="wallTexture"
+                  (ngModelChange)="applyWallTexture()"
+                  [disabled]="!isDimsValid()"
+                >
+                  <option
+                    *ngFor="let opt of wallTextureOptions"
+                    [value]="opt.key"
+                  >
+                    {{ opt.label }}
+                  </option>
+                </select>
+              </div>
+
+              <div class="col-12 d-grid mt-3">
+                <!-- Este botón ahora es más “Recalcular todo”,
+                   pero puedes dejarlo o cambiar el texto -->
+                <button class="btn btn-primary" [disabled]="!frm.form.valid">
+                  Aceptar y renderizar
+                </button>
+
+                <button
+                  type="button"
+                  class="btn btn-outline-secondary flex-fill mt-2"
+                  (click)="resetAll(frm)"
+                >
+                  Limpiar
+                </button>
+              </div>
+
+              <div class="col-12 d-grid mt-2">
+                <button
+                  type="button"
+                  class="btn btn-outline-primary"
+                  [disabled]="!isDimsValid()"
+                  (click)="toggleFront()"
+                >
+                  {{ frontVisible ? "Abrir frente" : "Cerrar frente" }}
+                </button>
+              </div>
+
+              <div class="col-12 d-grid mt-2">
+                <div class="btn-group" role="group" aria-label="Vistas">
+                  <button
+                    type="button"
+                    class="btn btn-outline-dark"
+                    [disabled]="!isDimsValid()"
+                    (click)="goExteriorView()"
+                  >
+                    Vista exterior
+                  </button>
+
+                  <button
+                    type="button"
+                    class="btn btn-outline-dark"
+                    [disabled]="!isDimsValid()"
+                    (click)="goInteriorView()"
+                  >
+                    Vista interior
+                  </button>
+                </div>
+              </div>
+
+              <div class="col-12 d-grid mt-2">
+                <button
+                  type="button"
+                  class="btn btn-success"
+                  (click)="downloadSnapshot()"
+                >
+                  Descargar imagen 📸
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <!-- Viewport 3D -->
+      <div class="col-12 col-lg-8">
+        <div class="card shadow-sm">
+          <div class="card-body p-0">
+            <div #viewport class="viewport position-relative"></div>
+          </div>
+        </div>
+        <hr class="my-3" />
+
+        <div class="small text-muted">
+          Usa el mouse para <strong>rotar</strong>,
+          <strong>hacer zoom</strong> y <strong>desplazar</strong>. El frente
+          está abierto para ver el interior del cuarto.
         </div>
       </div>
     </div>
